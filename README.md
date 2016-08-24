@@ -1,5 +1,18 @@
-README
--------------
 
-This repository is for basic app development.
-First App being a simple TIC-TAC-TOE game.
+
+################################################################
+
+    ***  **  *   * *** ***  *** ***  *  * ***  **  ***  ***
+    *   *  * **  *  *  *  *  *  *  * *  *  *  *  * *  * *
+    *   *  * * * *  *  ***   *  * *  *  *  *  *  * ***   *
+    *   *  * *  **  *  * *   *  *  * *  *  *  *  * * *    *
+    ***  **  *   *  *  *  * *** ***   **   *   **  *  * ***
+
+################################################################
+
+
+    1. SIDDHESHWAR P SHARMA
+    _______________________
+
+    This repository is for basic app development.
+    First App being a simple TIC-TAC-TOE game.
