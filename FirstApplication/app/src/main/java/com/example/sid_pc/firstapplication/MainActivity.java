@@ -1,6 +1,7 @@
 package com.example.sid_pc.firstapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.view.ViewGroup.LayoutParams;
 
 public class MainActivity extends Activity {
 
-    TableLayout tbl;
+    int w_p1 = 0;
+    int w_p2 = 0;
     Button b;
-    TextView player;
     Button b1;
     Button b2;
     Button b3;
@@ -27,20 +29,32 @@ public class MainActivity extends Activity {
     Button b7;
     Button b8;
     Button b9;
+    Button b12;
+    LinearLayout linearLayout1;
+    TableLayout tbl;
+    TextView player;
+    String final_message = null;
 
     int track[] = new int[10];
     boolean turn = false;
     int turns;
     int winner = 0;
     Button but;
+
+    PopupWindow popup;
+    LinearLayout pop_layout;
+    TextView popup_text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        linearLayout1 = (LinearLayout)findViewById(R.id.lout);
+        linearLayout1.setBackgroundResource(R.drawable.mainicon);
         tbl = (TableLayout)findViewById(R.id.table);
         tbl.setVisibility(View.INVISIBLE);
-        player = (TextView) findViewById(R.id.player);
+        player = (TextView) findViewById(R.id.textView);
 
 
         b  = (Button)findViewById(R.id.button);
@@ -53,13 +67,19 @@ public class MainActivity extends Activity {
         b7 = (Button)findViewById(R.id.button7);
         b8 = (Button)findViewById(R.id.button8);
         b9 = (Button)findViewById(R.id.button9);
-
+        b12 = (Button)findViewById(R.id.button12);
         b.setOnClickListener(mhandler_base);
-
+        b12.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
     View.OnClickListener mhandler_base = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            linearLayout1.setBackground(null);
             init();
         }
     };
@@ -67,26 +87,29 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View view) {
             turns++;
+            if(turns > 0)
+            {
+                b.setText("RESTART");
+                //b.setVisibility(View.VISIBLE);
+            }
             turn = !turn;
-            int col, chCol;
+            int col = Color.WHITE, chCol = Color.BLACK;
             String ch;
             int val;
+            player.setBackgroundColor(Color.BLACK);
+            player.setTextColor(Color.WHITE);
             if(turn) {
-                player.setTextColor(Color.BLACK);
-                player.setBackgroundColor(Color.RED);
-                player.setText("Turn for RED [Player 2]");
-                col = Color.BLACK;
+                player.setText("Turn for GREEN [Player "+ ((turns%2+2)%2+1) +"]");
+                //col = Color.BLACK;
                 ch = "X";
-                chCol = Color.WHITE;
+                chCol = Color.RED;
                 val = 1;
             }
             else {
-                player.setTextColor(Color.RED);
-                player.setBackgroundColor(Color.BLACK);
-                player.setText("Turn for BLACK [Player 1]");
-                col = Color.RED;
+                player.setText("Turn for RED [Player "+ ((turns%2+2)%2+1) +"]");
+                //col = Color.RED;
                 ch = "0";
-                chCol = Color.BLACK;
+                chCol = Color.GREEN;
                 val = 2;
             }
             switch (view.getId())
@@ -147,29 +170,59 @@ public class MainActivity extends Activity {
                 //deinit();
                 player.setTextColor(Color.WHITE);
                 player.setBackgroundColor(Color.BLACK);
-                if(winner == 1)
-                    player.setText("Player 1 [BLACK] WON");
-                else if(winner == 2)
-                    player.setText("Player 2 [RED] WON");
-                else
+                if(winner == 1) {
+                    w_p1 ++;
+                    player.setTextColor(Color.RED);
+                    player.setText("Player 1 [RED] WON");
+                    final_message = "Player 1 [RED] WON";
+                }
+                else if(winner == 2){
+                    w_p2 ++;
+                    player.setTextColor(Color.GREEN);
+                    player.setText("Player 2 [GREEN] WON");
+                    final_message = "Player 2 [GREEN] WON";
+                }
+                else{
+                    w_p1 ++;
+                    w_p2 ++;
                     player.setText("Match was DRAW");
-                b1.setClickable(false);
-                b2.setClickable(false);
-                b3.setClickable(false);
-                b4.setClickable(false);
-                b5.setClickable(false);
-                b6.setClickable(false);
-                b7.setClickable(false);
-                b8.setClickable(false);
-                b9.setClickable(false);
+                    final_message = "Match was DRAW";
+                }
+                deinit();
             }
         }
 
     };
 
+    void deinit()
+    {
+
+        b1.setClickable(false);
+        b2.setClickable(false);
+        b3.setClickable(false);
+        b4.setClickable(false);
+        b5.setClickable(false);
+        b6.setClickable(false);
+        b7.setClickable(false);
+        b8.setClickable(false);
+        b9.setClickable(false);
+
+        create_popup();
+    }
+    void create_popup()
+    {
+        Intent intent = new Intent(this, Pop.class);
+        final_message = final_message + "\nSCORE\n-------\n[ P1 : "+ w_p1 + " ]\n[ P2 : "+ w_p2 + " ]";
+        intent.putExtra("message", final_message );
+        startActivity(intent);
+        init();
+        //startActivity(new Intent(MainActivity.this,Pop.class));
+
+    }
     void init()
     {
         turns = 0;
+        turn = false;
         winner = 0;
         tbl.setVisibility(View.VISIBLE);
         for(int i=0;i<=9;i++)
@@ -177,6 +230,7 @@ public class MainActivity extends Activity {
         player.setTextColor(Color.WHITE);
         player.setBackgroundColor(Color.BLACK);
         player.setText("GAME STATUS");
+        //b.setVisibility(View.INVISIBLE);
         b1.setOnClickListener(mhandler);
         b2.setOnClickListener(mhandler);
         b3.setOnClickListener(mhandler);
